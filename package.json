@@ -4,9 +4,33 @@
   "description": "Replace import statements",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
-    "test": "npm run build && mocha",
-    "prepublish": "npm run build"
+    "build": "babel src/plugin.js --out-file lib/index.js",
+    "test": "npm run build && jest",
+    "prepublish": "npm run build",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": "src/plugin.js"
+  },
+  "dependencies": {
+    "@babel/helper-module-imports": "^7.8.3",
+    "lodash.isempty": "^4.4.0",
+    "lodash.isfunction": "^3.0.8",
+    "lodash.isobject": "^3.0.2",
+    "lodash.isregexp": "^4.0.1",
+    "lodash.isstring": "^4.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "babel-preset-minify": "^0.2.0",
+    "husky": "^4.2.3",
+    "jest": "^25.2.7",
+    "jest-cli": "^25.2.7",
+    "lint-staged": "^10.1.1",
+    "npm-watch": "^0.6.0",
+    "prettier": "^2.0.2"
   },
   "repository": {
     "type": "git",
@@ -23,20 +47,5 @@
   "bugs": {
     "url": "https://github.com/041616/babel-plugin-replace-imports/issues"
   },
-  "homepage": "https://github.com/041616/babel-plugin-replace-imports#readme",
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-minify": "^0.2.0",
-    "chai": "^4.1.2",
-    "mocha": "^4.0.1"
-  },
-  "dependencies": {
-    "lodash.isempty": "^4.4.0",
-    "lodash.isfunction": "^3.0.8",
-    "lodash.isobject": "^3.0.2",
-    "lodash.isregexp": "^4.0.1",
-    "lodash.isstring": "^4.0.1"
-  }
+  "homepage": "https://github.com/041616/babel-plugin-replace-imports#readme"
 }
