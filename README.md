@@ -1,5 +1,7 @@
 # babel-plugin-replace-imports
 
+[![Build Status](https://travis-ci.org/akaSybe/babel-plugin-replace-imports.svg?branch=master)](https://travis-ci.org/akaSybe/babel-plugin-replace-imports)
+
 Replaces import statements.
 
 ## Installation
