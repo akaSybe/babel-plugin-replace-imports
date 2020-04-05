@@ -71,36 +71,42 @@ export default function ({ types }) {
           });
         });
       },
-      ImportDeclaration: (path, { opts }) => {
-        if (path.node.__processed) return;
+      ImportDeclaration: (path, y) => {
+        // if (path.node.__processed) return;
 
         const transforms = [];
         const source = path.node.source.value;
+        // console.log("before");
 
+        // path.node.specifiers.forEach((specifier) => {
+        //   let importDeclaration;
+        //   console.log("inside");
+        //   // if (types.importDefaultSpecifier(path.node.specifiers)) {
+        //   console.log("inside specifier");
+        //   importDeclaration = addDefault(path, "source");
+        //   importDeclaration.__processed = true;
+        //   console.log("type", typeof x);
+        //   transforms.push(importDeclaration);
+        //   //}
+        // });
         options.patterns.forEach((pattern) => {
           const regex = pattern.test;
           if (regex.test(source)) {
             pattern.transforms.forEach((transform) => {
               let importDeclaration;
-              const newImportType = transform.changeImportTypeTo || "initial";
-              console.log(newImportType);
+              // console.log(newImportType);
               const newSource = source.replace(regex, transform.replacer);
-              if (newImportType === "side-effect") {
-                console.log(newSource);
+              if (transform.sideEffect) {
                 addSideEffect(path, newSource);
-                console.log(importDeclaration);
-                // } else if (newImportType === "named") {
-                //   importDeclaration = addNamed(path, path.node.source.name, newSource);
-                // } else if (newImportType === "default") {
-                //   importDeclaration = addDefault(path, newSource);
+                path.remove();
               } else {
                 importDeclaration = types.importDeclaration(
                   path.node.specifiers,
                   types.stringLiteral(newSource),
                 );
                 importDeclaration.__processed = true;
-                transforms.push(importDeclaration);
               }
+              if (importDeclaration) transforms.push(importDeclaration);
             });
           }
         });

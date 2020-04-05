@@ -10,6 +10,10 @@ function babelTransform(input, options) {
   return babel.transform(input, babelOptions);
 }
 
+function expectEqual(actual, expected) {
+  expect(actual.replace(/\s+/g, " ").trim()).toBe((expected || "").replace(/\s+/g, " ").trim());
+}
+
 describe("Options Tests:", () => {
   it("should throw an error if «test» option is not RegExp", () => {
     expect(() => babelTransform(INPUT, { patterns: [{}] })).toThrowError(
@@ -67,29 +71,24 @@ describe("Functionality tests:", () => {
   it("basic transform", () => {
     const input = `import X from 'y';`;
     const expected = `import X from "z";`;
-
     const options = {
       patterns: [{ test: /y/, transforms: [{ replacer: "z" }] }],
     };
     const output = babelTransform(input, options);
     expect(output.code).toEqual(expected);
   });
-
   it("multiple transforms", () => {
     const input = `import X from 'y';`;
     const expected = `import X from "foo";\nimport X from "bar";`;
-
     const options = {
       patterns: [{ test: /y/, transforms: [{ replacer: "foo" }, { replacer: "bar" }] }],
     };
     const output = babelTransform(input, options);
     expect(output.code).toEqual(expected.trim());
   });
-
   it("multiple patterns", () => {
     const input = `import X from 'x';\nimport Y from 'y'`;
     const expected = `import X from "foo";\nimport Y from "bar";`;
-
     const options = {
       patterns: [
         { test: /x/, transforms: [{ replacer: "foo" }] },
@@ -99,57 +98,45 @@ describe("Functionality tests:", () => {
     const output = babelTransform(input, options);
     expect(output.code).toEqual(expected.trim());
   });
-
   it("replace as function", () => {
     const input = `import X from 'y';`;
     const expected = `import X from "foo";`;
-
     const options = {
       patterns: [{ test: /y/, transforms: [{ replacer: () => "foo" }] }],
     };
     const output = babelTransform(input, options);
     expect(output.code).toEqual(expected.trim());
   });
-
   // it("should change import type to 'side-effect'", () => {
   //   const input = `import X from "foo";`;
-  //   const expected = `import "foo";`;
-
+  //   const expected = `import "bar";`;
   //   const options = {
-  //     patterns: [
-  //       { test: /foo/, transforms: [{ replacer: "foo", changeImportTypeTo: "side-effect" }] },
-  //     ],
+  //     patterns: [{ test: /foo/, transforms: [{ replacer: "bar", sideEffect: true }] }],
   //   };
   //   const output = babelTransform(input, options);
-  //   expect(output.code).toEqual(expected.trim());
+  //   expectEqual(output.code, expected);
   // });
-
   // it("should change import type to 'named'", () => {
-  //   const input = `import X from 'y';`;
-  //   const expected = `import "y";`;
-
-  //   const options = {
-  //     patterns: [{ test: /y/, transforms: [{ replacer: "y", changeImportTypeTo: "side-effect" }] }],
-  //   };
-  //   const output = babelTransform(input, options);
-  //   expect(output.code).toEqual(expected.trim());
-  // });
-
-  // it("should change import type to 'default'", () => {
   //   const input = `import { X } from 'y';`;
   //   const expected = `import "y";`;
-
   //   const options = {
   //     patterns: [{ test: /y/, transforms: [{ replacer: "y", sideEffect: true }] }],
   //   };
   //   const output = babelTransform(input, options);
   //   expect(output.code).toEqual(expected.trim());
   // });
-
+  // it("should change import type to 'default'", () => {
+  //   const input = `import { X } from 'y';`;
+  //   const expected = `import "y";`;
+  //   const options = {
+  //     patterns: [{ test: /y/, transforms: [{ replacer: "y", sideEffect: true }] }],
+  //   };
+  //   const output = babelTransform(input, options);
+  //   expect(output.code).toEqual(expected.trim());
+  // });
   // it("ati-ui-react: basic", () => {
   //   const input = `import Button from "ati-ui-react/components/Button";`;
   //   const expected = `import Button from "ati-ui-react/unstyled/components/Button";`;
-
   //   const options = {
   //     patterns: [
   //       {
@@ -161,14 +148,12 @@ describe("Functionality tests:", () => {
   //   const output = babelTransform(input, options);
   //   expect(output.code).toEqual(expected.trim());
   // });
-
   // it("ati-ui-react: complex", () => {
   //   const input = `import Button from "ati-ui-react/components/Button";`;
   //   const expected =
   //     `import Button from "ati-ui-react/unstyled/components/Button";` +
   //     `\n` +
   //     `import "ati-ui-react/unstyled/components/Button/styles.css";`;
-
   //   const options = {
   //     patterns: [
   //       {
